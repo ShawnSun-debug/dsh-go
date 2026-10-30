@@ -25,7 +25,11 @@ jobs:
           channel: stable
           cache: true
       - run: flutter pub get
-      - run: flutter build apk --release
+      - name: build
+        run: |
+          # 打包阶段（packageArm64Release）在 2.5G 堆上会 OOM 且不打印原因，CI 上给 4G
+          printf 'org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError\norg.gradle.logging.stacktrace=all\n' >> android/gradle.properties
+          flutter build apk --release
       - uses: actions/upload-artifact@v4
         with:
           name: dsh-go-apk
