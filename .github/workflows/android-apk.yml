@@ -15,6 +15,11 @@ jobs:
         working-directory: app
     steps:
       - uses: actions/checkout@v4
+      - name: free disk
+        run: |
+          df -h /
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost /usr/local/lib/android/sdk/ndk 2>/dev/null || true
+          df -h /
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -27,9 +32,11 @@ jobs:
       - run: flutter pub get
       - name: build
         run: |
-          # 打包阶段（packageArm64Release）在 2.5G 堆上会 OOM 且不打印原因，CI 上给 4G
+          # 打包阶段（packageArm64Release）在 2.5G 堆上会静默 OOM；CI 给 4G 并打印堆栈
           printf 'org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError\norg.gradle.logging.stacktrace=all\n' >> android/gradle.properties
-          flutter build apk --release
+          df -h /
+          flutter build apk --release --target-platform android-arm64
+          df -h /
       - uses: actions/upload-artifact@v4
         with:
           name: dsh-go-apk
