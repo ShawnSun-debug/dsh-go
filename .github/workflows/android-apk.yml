@@ -6,7 +6,6 @@ on:
     branches: [main]
     paths:
       - 'app/**'
-      - 'runtime/**'
       - '.github/workflows/android-apk.yml'
 
 jobs:
@@ -22,20 +21,24 @@ jobs:
           df -h /
           sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost /usr/local/lib/android/sdk/ndk 2>/dev/null || true
           df -h /
-      - name: runtime deps
+      - name: fetch runtime payload (upstream v1.0.7 release)
         working-directory: .
         run: |
-          sudo apt-get update -qq
-          sudo apt-get install -y -qq xz-utils gnupg curl python3 unzip
-      - name: build runtime (arm64-v8a)
-        working-directory: runtime
-        timeout-minutes: 90
-        run: |
-          df -h /
-          COMPRESS=xz ./build-runtime.sh arm64-v8a
-          df -h /
-          du -sh out
-          ls -la out/arm64-v8a/assets/runtime | head -20
+          set -euo pipefail
+          curl -fL --retry 3 --retry-delay 2 -o /tmp/up.apk \
+            https://github.com/ccch1mneyyy/dsh-Go/releases/download/v1.0.7/dsh-go-1.0.7-arm64.apk
+          echo '18d3f8d8475ac7d91cc7376fcb201edbc7a0f7f38bd2a80f1eca3a098b9c322a  /tmp/up.apk' | sha256sum -c -
+          rm -rf /tmp/up && mkdir -p /tmp/up
+          unzip -q /tmp/up.apk 'assets/runtime/*' 'lib/arm64-v8a/*' -d /tmp/up
+          mkdir -p runtime/out/arm64-v8a/assets runtime/out/arm64-v8a/jniLibs/arm64-v8a
+          cp -a /tmp/up/assets/runtime runtime/out/arm64-v8a/assets/
+          cp -a /tmp/up/lib/arm64-v8a/libproot.so /tmp/up/lib/arm64-v8a/libproot-loader.so \
+                /tmp/up/lib/arm64-v8a/libtalloc.so /tmp/up/lib/arm64-v8a/libandroid-shmem.so \
+                runtime/out/arm64-v8a/jniLibs/arm64-v8a/
+          rm -f /tmp/up.apk && rm -rf /tmp/up
+          du -sh runtime/out
+          ls -la runtime/out/arm64-v8a/assets/runtime
+          ls -la runtime/out/arm64-v8a/jniLibs/arm64-v8a
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -48,16 +51,14 @@ jobs:
       - run: flutter pub get
       - name: build
         run: |
-          printf 'org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError\norg.gradle.logging.stacktrace=all\n' >> android/gradle.properties
+          printf 'org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g\norg.gradle.logging.stacktrace=all\n' >> android/gradle.properties
           set +e
           flutter build apk --release --flavor arm64 --target-platform android-arm64 2>&1 | tail -80
           echo "flutter exit: $?"
-          echo '--- 产出的 apk ---'
           find . -name '*.apk' -not -path '*/intermediates/*' | tee /tmp/apks.txt
           test -s /tmp/apks.txt
       - name: apk size
-        run: |
-          ls -la build/app/outputs/flutter-apk/ || true
+        run: ls -la build/app/outputs/flutter-apk/ || true
       - uses: actions/upload-artifact@v4
         with:
           name: dsh-go-apk-full
