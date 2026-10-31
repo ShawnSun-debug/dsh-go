@@ -116,7 +116,7 @@ class _AssistantMessageState extends State<AssistantMessage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (reasoning.isNotEmpty) ...[
-            ThinkingPill(reasoning: reasoning, active: streaming && text.isEmpty),
+            ThinkingPill(reasoning: reasoning, active: streaming && text.isEmpty, streaming: streaming),
             if (text.isNotEmpty) const SizedBox(height: 8),
           ],
           if (text.isNotEmpty) _markdown(text, streaming),
