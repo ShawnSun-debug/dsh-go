@@ -56,6 +56,7 @@ class MarkdownBody extends StatefulWidget {
     this.streaming = false,
     this.selectable = true,
     this.secondary = false,
+    this.repairBareViews = false,
   });
 
   final String text;
@@ -64,6 +65,10 @@ class MarkdownBody extends StatefulWidget {
 
   /// 次级排版(思考过程):小一号、次级文字色,标题也不抢眼。
   final bool secondary;
+
+  /// 助手回复:模型把 `dsh-ui` 的 JSON 裸着写进正文时,也当成视图画
+  /// (见 [fenceBareDshUiViews])。别的 Markdown(文档、说明页)不开。
+  final bool repairBareViews;
 
   /// 表格单列最宽多少;更长的单元格在列内换行,而不是把整表拉得很长。
   static const _maxColumnWidth = 260.0;
@@ -463,10 +468,12 @@ class MarkdownBody extends StatefulWidget {
 
   /// What gpt_markdown is given for [text]: maths delimiters normalised,
   /// table headers bold and, while [streaming], the unfinished tail
-  /// repaired and the cursor sentinel placed.
+  /// repaired and the cursor sentinel placed. With [repairBareViews] a bare
+  /// `dsh-ui` JSON block gets its fence back first (see [fenceBareDshUiViews]).
   @visibleForTesting
-  static String prepareSource(String text, {bool streaming = false}) {
-    final source = boldTableHeaders(normalizeMath(text, streaming: streaming));
+  static String prepareSource(String text, {bool streaming = false, bool repairBareViews = false}) {
+    final repaired = repairBareViews ? fenceBareDshUiViews(text) : text;
+    final source = boldTableHeaders(normalizeMath(repaired, streaming: streaming));
     if (!streaming) return source;
     return _withCursor(repairStreamingMarkdown(source));
   }
@@ -505,13 +512,23 @@ class _MarkdownBodyState extends State<MarkdownBody> {
   // Preparation depends only on text and streaming, not theme, text scale or
   // selection. Keep one result for this mounted body; unrelated stream rows
   // can rebuild its parent without rescanning the unchanged Markdown.
-  late String _source = MarkdownBody.prepareSource(widget.text, streaming: widget.streaming);
+  late String _source = MarkdownBody.prepareSource(
+    widget.text,
+    streaming: widget.streaming,
+    repairBareViews: widget.repairBareViews,
+  );
 
   @override
   void didUpdateWidget(MarkdownBody oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.text != widget.text || oldWidget.streaming != widget.streaming) {
-      _source = MarkdownBody.prepareSource(widget.text, streaming: widget.streaming);
+    if (oldWidget.text != widget.text ||
+        oldWidget.streaming != widget.streaming ||
+        oldWidget.repairBareViews != widget.repairBareViews) {
+      _source = MarkdownBody.prepareSource(
+        widget.text,
+        streaming: widget.streaming,
+        repairBareViews: widget.repairBareViews,
+      );
     }
   }
 
