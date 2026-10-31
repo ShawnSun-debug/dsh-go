@@ -14624,6 +14624,36 @@ abstract class L10n {
   /// **'推荐连接电脑或服务器，减少本机负担'**
   String get performanceRemoteHint;
 
+  /// No description provided for @performanceRefresh.
+  ///
+  /// In zh, this message translates to:
+  /// **'刷新率'**
+  String get performanceRefresh;
+
+  /// No description provided for @performanceRefreshMax.
+  ///
+  /// In zh, this message translates to:
+  /// **'最高'**
+  String get performanceRefreshMax;
+
+  /// No description provided for @performanceRefreshSystem.
+  ///
+  /// In zh, this message translates to:
+  /// **'系统'**
+  String get performanceRefreshSystem;
+
+  /// No description provided for @performanceRefreshHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'自动：动时用最高刷新率，停下交回系统；系统：完全由系统决定。'**
+  String get performanceRefreshHint;
+
+  /// No description provided for @searchKwRefreshRate.
+  ///
+  /// In zh, this message translates to:
+  /// **'刷新率 高刷 120Hz 90Hz 流畅'**
+  String get searchKwRefreshRate;
+
   /// No description provided for @petActionSending.
   ///
   /// In zh, this message translates to:
@@ -29497,6 +29527,24 @@ abstract class L10n {
   /// In zh, this message translates to:
   /// **'取消：{value}'**
   String viewUiReplyCancel(String value);
+
+  /// No description provided for @viewUiReplyOther.
+  ///
+  /// In zh, this message translates to:
+  /// **'其他：{value}'**
+  String viewUiReplyOther(String value);
+
+  /// No description provided for @viewUiFreeTextHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'其他（自己填）'**
+  String get viewUiFreeTextHint;
+
+  /// No description provided for @viewUiChosenOther.
+  ///
+  /// In zh, this message translates to:
+  /// **'已填写：{value}'**
+  String viewUiChosenOther(String value);
 
   /// No description provided for @viewUiChosen.
   ///

@@ -7992,6 +7992,21 @@ class L10nZh extends L10n {
   String get performanceRemoteHint => '推荐连接电脑或服务器，减少本机负担';
 
   @override
+  String get performanceRefresh => '刷新率';
+
+  @override
+  String get performanceRefreshMax => '最高';
+
+  @override
+  String get performanceRefreshSystem => '系统';
+
+  @override
+  String get performanceRefreshHint => '自动：动时用最高刷新率，停下交回系统；系统：完全由系统决定。';
+
+  @override
+  String get searchKwRefreshRate => '刷新率 高刷 120Hz 90Hz 流畅';
+
+  @override
   String get petActionSending => '正在发送…';
 
   @override
@@ -16229,6 +16244,19 @@ class L10nZh extends L10n {
   @override
   String viewUiReplyCancel(String value) {
     return '取消：$value';
+  }
+
+  @override
+  String viewUiReplyOther(String value) {
+    return '其他：$value';
+  }
+
+  @override
+  String get viewUiFreeTextHint => '其他（自己填）';
+
+  @override
+  String viewUiChosenOther(String value) {
+    return '已填写：$value';
   }
 
   @override

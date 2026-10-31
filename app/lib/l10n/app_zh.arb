@@ -5175,6 +5175,11 @@
   "performanceSystemMotion": "同时遵循系统的移除动画设置",
   "performanceFollowMode": "效果跟随性能模式",
   "performanceRemoteHint": "推荐连接电脑或服务器，减少本机负担",
+  "performanceRefresh": "刷新率",
+  "performanceRefreshMax": "最高",
+  "performanceRefreshSystem": "系统",
+  "performanceRefreshHint": "自动：动时用最高刷新率，停下交回系统；系统：完全由系统决定。",
+  "searchKwRefreshRate": "刷新率 高刷 120Hz 90Hz 流畅",
   "petActionSending": "正在发送…",
   "petActionTargetChanged": "主机已变化，重新打开「问一句」；文字已保留",
   "petActionSendFailed": "没能发出，文字已保留，请重试",
@@ -10662,6 +10667,23 @@
   },
   "viewUiReplyCancel": "取消：{value}",
   "@viewUiReplyCancel": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiReplyOther": "其他：{value}",
+  "@viewUiReplyOther": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
+  "viewUiFreeTextHint": "其他（自己填）",
+  "viewUiChosenOther": "已填写：{value}",
+  "@viewUiChosenOther": {
     "placeholders": {
       "value": {
         "type": "String"

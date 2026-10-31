@@ -8413,6 +8413,22 @@ class L10nEn extends L10n {
   String get performanceRemoteHint => 'Connect to a computer or server to reduce work on this phone';
 
   @override
+  String get performanceRefresh => 'Refresh rate';
+
+  @override
+  String get performanceRefreshMax => 'Max';
+
+  @override
+  String get performanceRefreshSystem => 'System';
+
+  @override
+  String get performanceRefreshHint =>
+      'Auto: fastest while drawing, handed back when still; System: the system decides.';
+
+  @override
+  String get searchKwRefreshRate => 'refresh rate high refresh 120Hz 90Hz smooth';
+
+  @override
   String get petActionSending => 'Sending…';
 
   @override
@@ -17123,6 +17139,19 @@ class L10nEn extends L10n {
   @override
   String viewUiReplyCancel(String value) {
     return 'Cancel: $value';
+  }
+
+  @override
+  String viewUiReplyOther(String value) {
+    return 'Other: $value';
+  }
+
+  @override
+  String get viewUiFreeTextHint => 'Other (type your own)';
+
+  @override
+  String viewUiChosenOther(String value) {
+    return 'Wrote: $value';
   }
 
   @override
