@@ -3347,6 +3347,18 @@ class L10nEn extends L10n {
   String get catalogAllSettings => 'All settings';
 
   @override
+  String get diagnosticsForAi => 'Let the AI read diagnostics';
+
+  @override
+  String get diagnosticsForAiHint => 'Write the snapshot where the engine can read it';
+
+  @override
+  String get diagnosticsForAiDone => 'Written — ask the AI to \"check the diagnostics\"';
+
+  @override
+  String get diagnosticsForAiFailed => 'Not written: the local runtime is not installed';
+
+  @override
   String get chatBackgroundTaskNotice => 'Background task notice';
 
   @override

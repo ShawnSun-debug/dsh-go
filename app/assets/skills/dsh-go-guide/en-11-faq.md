@@ -15,6 +15,8 @@ Reset and uninstall both delete data on this phone; you rarely need them to fix 
 
 To report a problem, export a diagnostics bundle here. It includes the version, device, logs and the latest crash, never keys or tokens.
 
+To let the AI look into it: tap **Let the AI read diagnostics**. The app writes the same (redacted) snapshot into the engine, then ask the AI to "check the diagnostics" — the bundled `dsh-go-support` skill walks the symptoms and drafts an issue you can paste.
+
 ## The engine stops in the background, or notifications don't arrive
 
 <!-- nav: commonSettings,phoneEngineKeepAlive -->

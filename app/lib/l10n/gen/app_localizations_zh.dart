@@ -3188,6 +3188,18 @@ class L10nZh extends L10n {
   String get catalogAllSettings => '全部设置';
 
   @override
+  String get diagnosticsForAi => '让 AI 看诊断';
+
+  @override
+  String get diagnosticsForAiHint => '把环境快照写进引擎，AI 自己读';
+
+  @override
+  String get diagnosticsForAiDone => '已写入诊断，问 AI「看下诊断」就行';
+
+  @override
+  String get diagnosticsForAiFailed => '写不进去：本机运行时还没装好';
+
+  @override
   String get chatBackgroundTaskNotice => '后台任务通知';
 
   @override

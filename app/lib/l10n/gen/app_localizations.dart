@@ -5888,6 +5888,30 @@ abstract class L10n {
   /// **'全部设置'**
   String get catalogAllSettings;
 
+  /// No description provided for @diagnosticsForAi.
+  ///
+  /// In zh, this message translates to:
+  /// **'让 AI 看诊断'**
+  String get diagnosticsForAi;
+
+  /// No description provided for @diagnosticsForAiHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'把环境快照写进引擎，AI 自己读'**
+  String get diagnosticsForAiHint;
+
+  /// No description provided for @diagnosticsForAiDone.
+  ///
+  /// In zh, this message translates to:
+  /// **'已写入诊断，问 AI「看下诊断」就行'**
+  String get diagnosticsForAiDone;
+
+  /// No description provided for @diagnosticsForAiFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'写不进去：本机运行时还没装好'**
+  String get diagnosticsForAiFailed;
+
   /// No description provided for @chatBackgroundTaskNotice.
   ///
   /// In zh, this message translates to:

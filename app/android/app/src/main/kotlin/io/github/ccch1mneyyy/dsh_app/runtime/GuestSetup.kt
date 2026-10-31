@@ -68,6 +68,31 @@ object GuestSetup {
         |- 不要用视图收集密码、密钥或验证码。
         |""").trimMargin()
 
+    // l10n:keep agent prompt
+    private val DIAGNOSTICS_SECTION = """
+        |
+        |## 本机诊断
+        |
+        |- 用户报障（卡顿、发热、连不上、更新失败、闪退、插件不生效、手机操控失败）时，先读 `{PATH}`。App 每次都把最新的环境快照写在这里：版本、设备、引擎状态、连接方式、性能档位、最近错误和引擎日志尾部。这是给排查用的，读之前不用问用户。
+        |- 需要更多细节时，让用户在 设置 → 诊断 里导出完整诊断包（zip）；数据不足就直说，不要凭猜测下结论。
+        |- 报告已经脱敏（key、token、手机号之类不会出现）；仍然不要把里面的路径、设备信息原样贴到聊天或 issue 里。
+        |- 完整的排查流程（症状清单、issue 模板、隐私红线）在 `dsh-go-support` 技能里；用户报障时加载它再动手。
+        |""".trimMargin()
+
+    /** Where the engine's agent finds that snapshot, inside the guest. */
+    private const val DIAGNOSTICS_FILE = "root/.dsh/dsh-app/diagnostics.md"
+
+    /** Writes [markdown] where the engine's file tools can read it; returns the host file. */
+    fun writeDiagnostics(rootfs: File, markdown: String): File {
+        val file = File(rootfs, DIAGNOSTICS_FILE)
+        val dir = file.parentFile ?: throw IOException("no diagnostics directory")
+        if (!dir.isDirectory && !dir.mkdirs()) throw IOException("cannot create ${dir.path}")
+        val temp = File(dir, ".diagnostics.md.dsh-tmp")
+        temp.writeText(markdown)
+        if (!temp.renameTo(file)) throw IOException("cannot replace ${file.path}")
+        return file
+    }
+
     /** Global DSH instructions ($DSH_HOME/AGENTS.md); left alone once the user removes the marker. */
     fun writeAgentsMd(
         rootfs: File,
@@ -95,7 +120,12 @@ object GuestSetup {
                     "手机相册、下载等用户文件不在这个环境里，看不到；如需访问，请用户在 App 设置里打开「访问手机文件」。"
                 },
             ) + (if (visualReplies) DSH_UI_SECTION else "") +
-                (if (phoneControl) PhoneGuest.AGENTS_SECTION else "")
+                (if (phoneControl) PhoneGuest.AGENTS_SECTION else "") +
+                DIAGNOSTICS_SECTION.replace(
+                    "{PATH}",
+                    if (directEngine) "${rootfs.canonicalPath}/root/.dsh/dsh-app/diagnostics.md"
+                    else "\$DSH_HOME/dsh-app/diagnostics.md",
+                )
             file.parentFile?.mkdirs()
             if (!file.exists() || file.readText() != text) file.writeText(text)
         } catch (_: Exception) {
