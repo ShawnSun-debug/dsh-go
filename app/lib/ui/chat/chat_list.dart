@@ -1014,6 +1014,8 @@ class _JumpToBottom extends StatelessWidget {
     final pill = GlassSurface(
       key: const ValueKey('waiting'),
       tier: GlassTier.chrome,
+      // 悬在滚动 / 流式内容上:每帧重采样背景太贵,这两颗悬浮胶囊直接不模糊。
+      blur: false,
       stadium: true,
       onTap: onTap,
       child: SizedBox(
@@ -1043,6 +1045,7 @@ class _JumpToBottom extends StatelessWidget {
           Positioned.fill(
             child: GlassSurface(
               tier: GlassTier.chrome,
+              blur: false,
               circle: true,
               onTap: onTap,
               child: Center(child: Icon(AppIcons.scrollToBottom, size: 22, color: colors.onSurface)),
