@@ -31,6 +31,12 @@ object GuestSetup {
         |- 默认工作目录是 `/root/workspace`。{STORAGE_LINE}
         |- 已预装 node / npm / pnpm、python3 / pip、git；npm 和 pnpm 默认用国内镜像 registry.npmmirror.com。缺别的工具可以 `apt-get update && apt-get install -y <包名>`（需要联网）。
         |- 手机屏幕小：回复尽量简洁，代码块不要太宽；用用户使用的语言回答。
+        |
+        |## 界面与技能
+        |
+        |- 这个 App 的对话界面是 Flutter 原生界面，不是 Harness Web Client。改 App 自己的样子用 dsh-go-ui（ui.json）；给 App 加胶囊、菜单项、状态条、原生面板、工具卡这类功能用 dsh-go-plugin；只有用户明确要做 Cordis 插件、或要改 Harness 网页版 / 桌面端时，才用官方 cordis-plugin-development 等技能。
+        |- 没点名界面载体时，手机上的默认目标是 dsh-go 原生界面；先确定载体再选技能，不要按加载顺序决定。
+        |- dsh-go 原生插件不是 Cordis bundle：目录在 `${'$'}DSH_HOME/dsh-go/plugins/`，安装用 `dsh plugin --profile web add`；官方技能里的「工作区建包 + plugin_manager install_bundle」只用于 Cordis 插件，两套不要混用。
         |""").trimMargin()
 
     /**
