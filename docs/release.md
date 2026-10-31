@@ -92,6 +92,7 @@ versionCode = (年 - 2026) × 10^8 + MMDDhhmm      时钟固定按 UTC+8
    python3 tooling/release_assets.py --notes notes.md      # 产物在 dist/
    ```
 
+   > **不要只跑 `gh release create`。** 它只更新 GitHub；内测通道的 `beta/update.json` 会停在旧版本。带着内测令牌装的旧版本会先问内测通道，于是报「已是最新」（1.0.4 卡住就是这个原因）。公测发版一律走下面这个脚本：它同时写 R2、GitHub（`--github`）并回下载核对。
 5. **上传并上线**：`services/share-worker/scripts/publish-release.sh`，一次传到下载页的三条线路（R2、香港桶、GitHub Release），分别下载回来核对，全部一致才上线。见下面「发版到三条线路」。
    - 公测起加 `--github`：GitHub Release 由脚本建（标题 `DSH Go <版本>`，正文取 `docs/changelog.md` 对应一节）。`release_assets.py` 最后打印的 `gh release create …` 不用再手动跑。
    - 测试版（版本名带 `-`）脚本自动加 `--prerelease`：`releases/latest` 和 `releases/latest/download/…` 都跳过预发布，只有正式版会推给用户。
