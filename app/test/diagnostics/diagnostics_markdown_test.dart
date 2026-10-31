@@ -14,6 +14,7 @@ void main() {
     List<AppErrorRecord> errors = const [],
     Map<String, Object?> connection = const {},
     Map<String, Object?> performance = const {},
+    Map<String, Object?>? device,
   }) => DiagnosticsSnapshot(
     at: DateTime(2026, 10, 31, 18, 2, 3),
     status: RuntimeStatus(
@@ -29,17 +30,19 @@ void main() {
       launchSelectedMode: 'proot',
     ),
     settings: const AppSettings(apiKey: 'sk-verysecretvalue123', themeMode: ThemeMode.dark, phoneStorage: true),
-    native: const NativeDiagnostics(
+    native: NativeDiagnostics(
       app: {'versionName': '1.0.6', 'versionCode': 10311700, 'abi': 'arm64-v8a'},
-      device: {
-        'manufacturer': 'vivo',
-        'brand': 'vivo',
-        'model': 'V2405A',
-        'android': '16',
-        'sdkInt': 36,
-        'memoryMb': 12288,
-        'freeStorageMb': 4096,
-      },
+      device:
+          device ??
+          {
+            'manufacturer': 'vivo',
+            'brand': 'vivo',
+            'model': 'V2405A',
+            'android': '16',
+            'sdkInt': 36,
+            'memoryMb': 12288,
+            'freeStorageMb': 4096,
+          },
       manifest: {'runtimeVersion': 'r11', 'dshVersion': '0.2.1-rc.4', 'nodeVersion': '24.22.1'},
     ),
     connection: connection,
@@ -92,6 +95,18 @@ void main() {
     expect(capped, contains('取最后 80 行'));
     expect(capped, isNot(contains('line 0:')));
     expect(capped, contains('line 2999:'));
+  });
+
+  test('display facts are printed, for "the pet looks the wrong size" reports', () {
+    final text = diagnosticsMarkdown(
+      snapshot(
+        device: {
+          'model': 'M154FF',
+          'display': {'widthPx': 1208, 'heightPx': 2624, 'density': 2.625, 'densityDpi': 420, 'fontScale': 1.0},
+        },
+      ),
+    );
+    expect(text, contains('显示：1208×2624 · 420dpi · 2.625× · 字号 1.0'));
   });
 
   test('connection and performance maps are printed as facts', () {

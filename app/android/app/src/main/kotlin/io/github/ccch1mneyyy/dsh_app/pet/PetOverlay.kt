@@ -431,7 +431,7 @@ internal object PetOverlay {
         val request = ++loadRequest
         val density = app.resources.displayMetrics.density
         worker.execute {
-            val l = sprites.load(id, worker) { pack -> pack.screenScale(PetPack.bodyDp(size), density) }
+            val l = sprites.load(id, worker) { pack -> pack.screenScale(PetSize.fromName(size), density) }
             l?.warmResident()
             main.post {
                 if (request != loadRequest || loadingKey != key || packKey(machine.last) != key) {

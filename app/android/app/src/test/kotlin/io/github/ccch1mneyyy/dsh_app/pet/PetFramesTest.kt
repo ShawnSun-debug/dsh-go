@@ -110,7 +110,7 @@ class PetFramesTest {
     private val packs = listOf("deepy-whale", "whale-girl")
 
     private fun frames(p: PetPack, size: String = "medium", density: Float = 2.75f) =
-        PetFrames.of(p, p.windowBox(), p.screenScale(PetPack.bodyDp(size), density))
+        PetFrames.of(p, p.windowBox(), p.screenScale(PetSize.fromName(size), density))
 
     /** The animations that get their own frame: each grown state's first. */
     private fun grownAnims(p: PetPack) = PetFrames.GROWN_STATES.map { p.animations.getValue(p.states.getValue(it).first()) }
@@ -152,13 +152,13 @@ class PetFramesTest {
         assertEquals("react-drag", drag.name)
         // Rest: wide hit box (8, 18, 44 × 31) with the idle cell's shadow row → 44 × 32 art px.
         assertEquals(PetBox(8f, 18f, 44f, 32f), p.windowBox())
-        // Medium on a 2.75 phone: 30 dp × 2.75 / 22 = 3.75 px per art px.
+        // Medium on a 2.75 phone: the app's 4 whole px per art px (petDevicePixels).
         val f = frames(p)
-        assertEquals(FramePx(0, 0, 165, 120), f.rest)
-        // react-drag's cell starts at y 4: (4 − 18) × 3.75 = 52.5 px above the rest frame.
-        assertEquals(FramePx(8, -52, 162, 121), f.cell(drag))
+        assertEquals(FramePx(0, 0, 176, 128), f.rest)
+        // react-drag's cell starts at y 4: (4 − 18) × 4 = 56 px above the rest frame.
+        assertEquals(FramePx(8, -56, 172, 128), f.cell(drag))
         assertFalse(f.rest.contains(f.cell(drag)))
-        assertEquals(FramePx(0, -52, 165, 121), f.held)
+        assertEquals(FramePx(0, -56, 176, 128), f.held)
         assertTrue(f.held.contains(f.rest))
         assertTrue(f.held.contains(f.cell(drag)))
     }
@@ -179,12 +179,12 @@ class PetFramesTest {
         val p = shipped("deepy-whale")
         val f = frames(p)
         assertEquals(listOf("happy", "waking", "typing"), grownAnims(p).map { it.name })
-        // typing: the laptop, 8 art px left (30 px); above only its top row's 1 art px; right and bottom as at rest.
-        assertEquals(FramePx(-30, -4, 165, 120), f.grown["typing"])
+        // typing: the laptop, 8 art px left (32 px); above only its top row's 1 art px; right and bottom as at rest.
+        assertEquals(FramePx(-32, -4, 176, 128), f.grown["typing"])
         // happy jumps 13 art px up and reaches 8 left; waking jumps 14 up (its last row rounds 1 px below).
-        assertEquals(FramePx(-30, -49, 165, 120), f.grown["happy"])
-        assertEquals(FramePx(0, -52, 165, 121), f.grown["waking"])
-        assertEquals(FramePx(-30, -52, 165, 121), f.reach)
+        assertEquals(FramePx(-32, -52, 176, 128), f.grown["happy"])
+        assertEquals(FramePx(0, -56, 176, 128), f.grown["waking"])
+        assertEquals(FramePx(-32, -56, 176, 128), f.reach)
         assertEquals(f.rest, f.frameFor(p.primary("working", 2), holding = false))
     }
 
@@ -307,8 +307,8 @@ class PetFramesTest {
             assertEquals(anim.name, setOf(WindowPos(rest.x + cell.left, rest.y + cell.top)), screens)
         }
         for (frame in all) assertEquals(rest, PetFrames.restOf(PetFrames.windowAt(rest, frame), frame))
-        assertEquals(WindowPos(907, 1405 - 52), PetFrames.windowAt(rest, f.held))
-        assertEquals(WindowPos(907 - 30, 1405 - 4), PetFrames.windowAt(rest, f.grown.getValue("typing")))
+        assertEquals(WindowPos(907, 1405 - 56), PetFrames.windowAt(rest, f.held))
+        assertEquals(WindowPos(907 - 32, 1405 - 4), PetFrames.windowAt(rest, f.grown.getValue("typing")))
     }
 
     /**
@@ -361,7 +361,7 @@ class PetFramesTest {
         val f = frames(shipped("deepy-whale"))
         val start = WindowPos(400, 1200)
         val window = EdgeSnap.carry(start, -120, 300, f.held, portrait)
-        assertEquals(WindowPos(400 - 120, 1200 + 300 - 52), window)
+        assertEquals(WindowPos(400 - 120, 1200 + 300 - 56), window)
         val rest = PetFrames.restOf(window, f.held)
         assertEquals(WindowPos(280, 1500), rest)
         val old = EdgeSnap.clampDrag(start.x - 120, start.y + 300, f.rest.width, f.rest.height, portrait)
@@ -379,10 +379,10 @@ class PetFramesTest {
             assertTrue(where, w.x >= 0 && w.x + f.held.width <= portrait.screenW)
             assertTrue(where, w.y >= portrait.top && w.y + f.held.height <= portrait.screenH - portrait.bottom)
         }
-        // Pinned to the top, the rest frame sits 52 px lower than the window, so the head shows.
+        // Pinned to the top, the rest frame sits 56 px lower than the window, so the head shows.
         val pinned = EdgeSnap.carry(top, 0, -3000, f.held, portrait)
         assertEquals(portrait.top, pinned.y)
-        assertEquals(portrait.top + 52, PetFrames.restOf(pinned, f.held).y)
+        assertEquals(portrait.top + 56, PetFrames.restOf(pinned, f.held).y)
         // The release reads where the finger put the rest frame (as before the window grew), so the
         // top dock is still reachable.
         val drop = EdgeSnap.clampDrag(top.x, top.y - 3000, f.rest.width, f.rest.height, portrait)

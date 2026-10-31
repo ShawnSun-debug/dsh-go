@@ -1,9 +1,26 @@
 package io.github.ccch1mneyyy.dsh_app.pet
 
 import io.github.ccch1mneyyy.dsh_app.phone.Json
+import kotlin.math.roundToInt
 
 /** One frame: which cell of the sheet, and for how long. */
 data class PetFrame(val cell: Int, val ms: Int)
+
+/** The three sizes in 宠物设置, by body height (dp) — the app's PetSize (`pet_state.dart` §2.10). */
+enum class PetSize(val dp: Float) {
+    SMALL(22f),
+    MEDIUM(30f),
+    LARGE(40f);
+
+    companion object {
+        /** The channel's name (`small` / `medium` / `large`); anything else reads as medium. */
+        fun fromName(name: String?): PetSize = when (name) {
+            "small" -> SMALL
+            "large" -> LARGE
+            else -> MEDIUM
+        }
+    }
+}
 
 /** A rectangle in logical pixels (the pack's canvas). */
 data class PetBox(val x: Float, val y: Float, val w: Float, val h: Float) {
@@ -129,23 +146,34 @@ class PetPack(
     val crisp: Boolean get() = pixelArt && scale == 1
 
     /**
-     * Physical pixels per logical (art) pixel for a body [bodyDp] tall:
-     * a whole number for crisp packs, exact for hi-res ones.
+     * Physical pixels per logical (art) pixel for [size] at [density] — the app's rule
+     * (`pet_sprite.dart`'s petScale / petDevicePixels), so the out-of-app pet is as big as the one
+     * on the chat page (docs/design/pets.md §2.10). Pixel art snaps [k] to a whole number of
+     * physical pixels and keeps the three sizes apart ([devicePixels]); hi-res art draws at the
+     * target body height.
      */
-    fun screenScale(bodyDp: Float, density: Float): Float {
-        val raw = bodyDp * density / contentBox.h
-        return if (crisp) maxOf(1, Math.round(raw)).toFloat() else raw
+    fun screenScale(size: PetSize, density: Float): Float =
+        if (pixelArt) devicePixels(size, density).toFloat() else size.dp * density / contentBox.h
+
+    /**
+     * Whole physical pixels per art pixel for [size]: `round(dp × density ÷ body)`, then small /
+     * medium / large at least one apart — on a 2.75× phone 22/30/40 dp over a 49 px body round to
+     * 1/2/2, and two of the three sizes would otherwise draw alike.
+     */
+    fun devicePixels(size: PetSize, density: Float): Int {
+        fun at(s: PetSize): Int = (s.dp.toDouble() * density / contentBox.h).roundToInt().coerceAtLeast(1)
+        val small = at(PetSize.SMALL)
+        val medium = maxOf(small + 1, at(PetSize.MEDIUM))
+        val large = maxOf(medium + 1, at(PetSize.LARGE))
+        return when (size) {
+            PetSize.SMALL -> small
+            PetSize.MEDIUM -> medium
+            PetSize.LARGE -> large
+        }
     }
 
     companion object {
         const val IDLE = "idle"
-
-        /** Body heights of the three sizes (dp): small, medium, large. */
-        fun bodyDp(size: String?): Float = when (size) {
-            "small" -> 22f
-            "large" -> 40f
-            else -> 30f
-        }
 
         /** Clawd on Desk state names the overlay understands (anything else plays as idle). */
         val STATES = setOf(

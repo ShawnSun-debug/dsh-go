@@ -45,6 +45,13 @@ void _environment(StringBuffer b, DiagnosticsSnapshot s) {
     ..writeln('- 设备：${_join([device['manufacturer'], device['brand'], device['model'], _android(device)], mono: true)}')
     ..writeln('- 设备资源：${_join([_mb(device['memoryMb'], '内存'), _mb(device['freeStorageMb'], '剩余存储')])}')
     ..writeln('- ABI：${st.abi ?? '—'}');
+  final display = device['display'];
+  if (display is Map) {
+    final d = {for (final e in display.entries) '${e.key}': e.value};
+    b.writeln(
+      '- 显示：${_join([if (d['widthPx'] != null && d['heightPx'] != null) '${d['widthPx']}×${d['heightPx']}', if (d['densityDpi'] != null) '${d['densityDpi']}dpi', if (d['density'] != null) '${d['density']}×', if (d['fontScale'] != null) '字号 ${d['fontScale']}'])}',
+    );
+  }
   if (manifest.isNotEmpty) {
     b.writeln(
       '- 内置运行时：${_join([manifest['runtimeVersion'], manifest['dshVersion'], manifest['nodeVersion']], mono: true)}',

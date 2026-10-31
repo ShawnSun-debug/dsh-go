@@ -183,9 +183,10 @@
   | 大 | 40dp |
 
   身体高度取 `contentBox.h`。
-- 缩放倍数 `k` 的定义是：每个美术像素占多少个**物理像素**。像素画包要求 `k` 为整数，`k = max(1, round(目标dp × devicePixelRatio ÷ contentBox.h))`。
+- 缩放倍数 `k` 的定义是：每个美术像素占多少个**物理像素**。像素画包要求 `k` 为整数：先算 `max(1, round(目标dp × devicePixelRatio ÷ contentBox.h))`，再让小、标准、大**至少各差 1**（`medium = max(small + 1, …)`，`large = max(medium + 1, …)`）。不加这一步的话，dpr 2.75 的手机上 22/30/40dp 会同时落成 1/2/2，三档分不出大小，悬浮窗还会比 App 内小一档。
+- 非像素画包（`pixelArt: false`）的 `k` 不限整数：`k = 目标dp × devicePixelRatio ÷ contentBox.h`。
 - 宠物的左上角和脚线都对齐到物理像素。
-- 悬浮窗和 App 内用同一档位。
+- 悬浮窗和 App 内用同一档位，也就是同一套 `k`：App 内是 `pet_sprite.dart` 的 `petDevicePixels`，悬浮窗是 Kotlin `PetPack.devicePixels`，两边各有一份逐值对齐的单测（`pet_pixel_test.dart`、`PetPackTest.kt`）。
 
 ## 3. 宠物包格式
 
@@ -504,7 +505,8 @@ Clawd 主题 zip 的导入走宠物包转换工具（`app/tool/make_pet_pack.py`
   - 被 `setHideOverlayWindows` 藏掉；
   - 空闲变淡；
   - 拖到「×」关闭；
-  - 5 分钟自动收起。
+  - 5 分钟自动收起；
+  - 同一档位下，悬浮窗里宠物的身体高度与聊天页一致（两只宠物 × 小/标准/大 × dpr 2.0/2.625/2.75/3.0/3.5）。
 - **性能**：宠物待机时，聊天页不能因为宠物而每帧重绘；悬浮窗待机时，每分钟重绘的次数要和 §6.2 的节奏一致。
 - **真机**：在 vivo 真机上验收。
 
@@ -530,6 +532,7 @@ Clawd 主题 zip 的导入走宠物包转换工具（`app/tool/make_pet_pack.py`
 | 16 | 挠痒痒改为 1.1 秒内连点 3 下 | 和鲸娘原页一致，小目标上连点 4 下太难 | 聊天页 |
 | 17 | 宠物开启时隐藏空状态里的静止鲸尾 | 一屏一个吉祥物 | empty_state |
 | 18 | 素材许可要如实填写 | 见 `ASSETS.md` | 宠物包 |
+| 19 | 悬浮窗的 `k` 与 App 内 `petDevicePixels` 逐值对齐：像素画包（含 scale > 1 的 Deepy）一律取整数，并保持小、标准、大至少各差 1（2026-11-01，修「悬浮窗里的鲸娘特别小」） | 悬浮窗原来只四舍五入一次，且只对 scale = 1 取整：鲸娘「大」在 dpr 1.84–3.06 只有 App 内的 2/3，「标准」在 dpr < 2.45 只有一半；Deepy 也小 5–12%。文档一直写着「悬浮窗和 App 内用同一档位」 | 悬浮窗 |
 
 ## 13. 第二期与不做
 
