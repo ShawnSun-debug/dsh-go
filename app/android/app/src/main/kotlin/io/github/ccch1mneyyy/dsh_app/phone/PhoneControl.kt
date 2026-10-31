@@ -584,7 +584,7 @@ class PhoneControl private constructor(private val app: Context) : PhoneEnv, Con
     override fun backgroundUnavailable(): String {
         val reason = (backgroundStatus()["reason"] as? String)?.let { "（$it）" } ?: ""
         // l10n:keep agent stop reason
-        return "不打扰模式（后台屏）现在用不了$reason。只能在主屏（s 开头的屏幕号）上操作；要用后台屏，请用户在 DSH 设置 → 手机操控 → 不打扰模式 里开通。"
+        return "不打扰模式（后台屏）用不了$reason。只能在主屏操作；要用后台屏请用户到 设置 → 手机操控 → 不打扰模式 开通。"
     }
 
     override fun system(): SystemApi = system
