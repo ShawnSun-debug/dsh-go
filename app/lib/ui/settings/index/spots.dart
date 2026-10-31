@@ -820,6 +820,12 @@ abstract final class Spots {
   );
 
   // 性能.
+  static final refreshRate = SettingSpot(
+    'refresh-rate',
+    page: SettingsPageId.performance,
+    title: (l) => l.performanceRefresh,
+    keywords: (l) => l.searchKwRefreshRate,
+  );
   static final blur = SettingSpot(
     'blur',
     page: SettingsPageId.performance,
@@ -1037,6 +1043,7 @@ final _rows = <SettingSpot>[
   Spots.webCodingView,
   Spots.webCollapse,
   Spots.webBusySend,
+  Spots.refreshRate,
   Spots.blur,
   Spots.animations,
   Spots.notifyEnabled,
