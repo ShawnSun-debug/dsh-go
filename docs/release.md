@@ -105,7 +105,7 @@ versionCode = (年 - 2026) × 10^8 + MMDDhhmm      时钟固定按 UTC+8
 | 文件（脚本的默认位置，权限 600） | 内容 | 用在 |
 |---|---|---|
 | `~/keys/dshgo-beta-secret` | Worker secret `BETA_SECRET`：密钥哈希的盐、下载链接的签名钥 | `beta-keys.sh` |
-| `~/keys/dshgo-beta-channel.token` | 通道令牌（`dshc_…`） | `build-apk.sh` 编进 release 包；`publish-release.sh` 实测 |
+| `~/keys/dshgo-beta-channel.token` | 通道令牌（`dshc_…`） | `build-apk.sh --beta` 才编进内测包（公测包不带）；`publish-release.sh` 实测 |
 | Cloudflare API token | 部署、写 R2 / KV | 各脚本的 `CF_TOKEN_FILE` |
 
 **一次性开通**（每台发版机器一次）：
