@@ -6,6 +6,8 @@ on:
     branches: [main]
     paths:
       - 'app/**'
+      - 'runtime/**'
+      - '.github/workflows/android-apk.yml'
 
 jobs:
   build:
@@ -20,6 +22,20 @@ jobs:
           df -h /
           sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/share/boost /usr/local/lib/android/sdk/ndk 2>/dev/null || true
           df -h /
+      - name: runtime deps
+        working-directory: .
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq xz-utils gnupg curl python3 unzip
+      - name: build runtime (arm64-v8a)
+        working-directory: runtime
+        timeout-minutes: 90
+        run: |
+          df -h /
+          COMPRESS=xz ./build-runtime.sh arm64-v8a
+          df -h /
+          du -sh out
+          ls -la out/arm64-v8a/assets/runtime | head -20
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -34,13 +50,16 @@ jobs:
         run: |
           printf 'org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError\norg.gradle.logging.stacktrace=all\n' >> android/gradle.properties
           set +e
-          flutter build apk --release --target-platform android-arm64 2>&1 | tail -60
+          flutter build apk --release --flavor arm64 --target-platform android-arm64 2>&1 | tail -80
           echo "flutter exit: $?"
           echo '--- 产出的 apk ---'
           find . -name '*.apk' -not -path '*/intermediates/*' | tee /tmp/apks.txt
           test -s /tmp/apks.txt
+      - name: apk size
+        run: |
+          ls -la build/app/outputs/flutter-apk/ || true
       - uses: actions/upload-artifact@v4
         with:
-          name: dsh-go-apk
+          name: dsh-go-apk-full
           path: app/build/**/*.apk
           if-no-files-found: error
