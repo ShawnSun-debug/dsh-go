@@ -471,11 +471,19 @@ class MarkdownBody extends StatefulWidget {
   /// repaired and the cursor sentinel placed. With [repairBareViews] a bare
   /// `dsh-ui` JSON block gets its fence back first (see [fenceBareDshUiViews]).
   @visibleForTesting
-  static String prepareSource(String text, {bool streaming = false, bool repairBareViews = false}) {
+  static String prepareSource(String text, {bool streaming = false, bool repairBareViews = false}) =>
+      _prepareSource(text, streaming: streaming, repairBareViews: repairBareViews);
+
+  static String _prepareSource(
+    String text, {
+    bool streaming = false,
+    bool repairBareViews = false,
+    StreamingMarkdownRepair? repair,
+  }) {
     final repaired = repairBareViews ? fenceBareDshUiViews(text) : text;
     final source = boldTableHeaders(normalizeMath(repaired, streaming: streaming));
     if (!streaming) return source;
-    return _withCursor(repairStreamingMarkdown(source));
+    return _withCursor(repair?.repair(source) ?? repairStreamingMarkdown(source));
   }
 
   /// [text] with the cursor sentinel where the reader's eye is: at the end
@@ -509,14 +517,22 @@ class MarkdownBody extends StatefulWidget {
 }
 
 class _MarkdownBodyState extends State<MarkdownBody> {
+  StreamingMarkdownRepair? _repair;
+
   // Preparation depends only on text and streaming, not theme, text scale or
   // selection. Keep one result for this mounted body; unrelated stream rows
   // can rebuild its parent without rescanning the unchanged Markdown.
-  late String _source = MarkdownBody.prepareSource(
-    widget.text,
-    streaming: widget.streaming,
-    repairBareViews: widget.repairBareViews,
-  );
+  late String _source = _prepare();
+
+  String _prepare() {
+    _repair = widget.streaming ? (_repair ?? StreamingMarkdownRepair()) : null;
+    return MarkdownBody._prepareSource(
+      widget.text,
+      streaming: widget.streaming,
+      repairBareViews: widget.repairBareViews,
+      repair: _repair,
+    );
+  }
 
   @override
   void didUpdateWidget(MarkdownBody oldWidget) {
@@ -524,11 +540,7 @@ class _MarkdownBodyState extends State<MarkdownBody> {
     if (oldWidget.text != widget.text ||
         oldWidget.streaming != widget.streaming ||
         oldWidget.repairBareViews != widget.repairBareViews) {
-      _source = MarkdownBody.prepareSource(
-        widget.text,
-        streaming: widget.streaming,
-        repairBareViews: widget.repairBareViews,
-      );
+      _source = _prepare();
     }
   }
 
