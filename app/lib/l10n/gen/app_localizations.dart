@@ -2216,6 +2216,18 @@ abstract class L10n {
   /// **'没有匹配的指令，按普通消息发送'**
   String get activitySlashNoMatch;
 
+  /// No description provided for @activitySlashBorrowed.
+  ///
+  /// In zh, this message translates to:
+  /// **'来自上次对话，可能不含新装的技能'**
+  String get activitySlashBorrowed;
+
+  /// No description provided for @activitySlashRetry.
+  ///
+  /// In zh, this message translates to:
+  /// **'重试'**
+  String get activitySlashRetry;
+
   /// No description provided for @activitySlashCommands.
   ///
   /// In zh, this message translates to:

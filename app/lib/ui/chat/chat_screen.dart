@@ -1355,6 +1355,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
         : null;
     final hasFolders = sessionId == null && ref.watch(drawerViewProvider).folders.isNotEmpty;
     final commands = ref.watch(slashCommandsProvider(sessionId));
+    // A new chat borrows the newest conversation's catalog: say where the rows
+    // came from, and offer one more try when the Host refused to answer.
+    final borrowedCatalog = sessionId == null && ref.watch(newChatCatalogStaleProvider);
+    final retryCatalog = sessionId == null && ref.watch(newChatCatalogRetryableProvider);
     final contextFraction = sessionId == null
         ? null
         : ref.watch(sessionUsageProvider(sessionId).select((u) => u.contextFraction));
@@ -1642,6 +1646,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> with WidgetsBindingObse
                                         key: ValueKey(content is PaletteHint),
                                         content: content,
                                         onPick: _pick,
+                                        borrowed: borrowedCatalog,
+                                        onRetry: retryCatalog ? () => ref.invalidate(hostCommandsProvider(null)) : null,
                                       ),
                               ),
                             );

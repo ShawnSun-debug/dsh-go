@@ -255,6 +255,42 @@ bool _isSubsequence(String needle, String haystack) {
 /// plugin commands.
 final Map<HostRef, List<SlashCommand>> _lastHostCommands = {};
 
+/// Skills of the newest conversation on each host, for the new-chat palette.
+final Map<HostRef, List<SlashCommand>> _lastHostSkills = {};
+
+/// Hosts already asked for their newest conversation's catalog; a host asks
+/// once per process, not once per keystroke.
+final Set<HostRef> _warmedHosts = {};
+
+/// Hosts whose new-chat catalog came from the previous conversation rather
+/// than from a live agent.
+final Set<HostRef> _staleHosts = {};
+
+/// Hosts whose last new-chat borrow was refused (no handler, transport
+/// error): the palette offers a retry instead of looking merely empty.
+final Set<HostRef> _refusedHosts = {};
+
+/// Skills as palette rows: `/name …` goes out as a normal message and the
+/// Host loads the skill from its text.
+List<SlashCommand> skillSlashCommands(List<SkillInfo> skills) => [
+  for (final s in skills)
+    SlashCommand(name: s.name, label: s.name, description: s.description, hint: '', kind: SlashCommandKind.skill),
+];
+
+/// Whether the new-chat palette shows the previous conversation's catalog
+/// (the Host answers `commands/list` only for a real agent).
+final newChatCatalogStaleProvider = Provider.autoDispose<bool>((ref) {
+  ref.watch(hostCommandsProvider(null));
+  return _staleHosts.contains(ref.watch(activeHostProvider));
+});
+
+/// Whether the last new-chat borrow was refused: the palette then offers a
+/// retry, whose invalidation asks the Host again.
+final newChatCatalogRetryableProvider = Provider.autoDispose<bool>((ref) {
+  ref.watch(hostCommandsProvider(null));
+  return _refusedHosts.contains(ref.watch(activeHostProvider));
+});
+
 /// `commands/list` for [sessionId] (null = new chat: the last known list).
 ///
 /// Re-fetched when the Host reports `commands/change` (a plugin registered or
@@ -264,7 +300,29 @@ final hostCommandsProvider = FutureProvider.autoDispose.family<List<SlashCommand
   final conn = ref.watch(activeConnectionProvider).value;
   final host = ref.watch(activeHostProvider);
   if (conn == null) return const [];
-  if (sessionId == null) return _lastHostCommands[host] ?? const [];
+  if (sessionId == null) {
+    // A brand new chat has no agent yet, so the Host cannot answer
+    // `commands/list` for it: borrow the newest conversation's catalog, which
+    // keeps the first message a real one instead of a throwaway sent just to
+    // open the palette. Failures fall back to whatever this host last showed.
+    if (_lastHostCommands[host] case final cached?) return cached;
+    if (!_warmedHosts.add(host)) return const [];
+    try {
+      final newest = (await conn.client.listSessions()).where((s) => s.origin == null).firstOrNull;
+      _refusedHosts.remove(host);
+      if (newest == null) return const [];
+      _lastHostSkills[host] = skillSlashCommands(await conn.client.listSkills(newest.sessionId));
+      final commands = parseCommandList(await conn.client.rpc.call('commands/list', {'agentId': newest.sessionId}));
+      // Only a borrow that landed says "from your last conversation".
+      _staleHosts.add(host);
+      return _lastHostCommands[host] = commands;
+    } catch (_) {
+      // A refused borrow keeps the retry affordance and is asked again.
+      _refusedHosts.add(host);
+      _warmedHosts.remove(host);
+      return const [];
+    }
+  }
   final sub = conn.client.hostEvents.listen((event) {
     if (event is HostReadyEvent ||
         (event is UnknownHostEvent && (event.event == 'commands/change' || event.event == 'agent-preset/selected'))) {
@@ -280,14 +338,20 @@ final hostCommandsProvider = FutureProvider.autoDispose.family<List<SlashCommand
   }
 });
 
-/// The session's skills as palette rows (none for a new chat).
+/// The session's skills as palette rows.
+///
+/// A new chat borrows the newest conversation's list: skills are loaded per
+/// session (project skills follow its directory), so there is nothing to ask
+/// for before the first session exists.
 final skillCommandsProvider = Provider.autoDispose.family<List<SlashCommand>, String?>((ref, sessionId) {
-  if (sessionId == null) return const [];
+  if (sessionId == null) {
+    final host = ref.watch(activeHostProvider);
+    // Read again once the warm-up lands, so the rows appear without a reopen.
+    ref.watch(hostCommandsProvider(null));
+    return _lastHostSkills[host] ?? const [];
+  }
   final skills = ref.watch(skillsProvider(sessionId)).value ?? const [];
-  return [
-    for (final s in skills)
-      SlashCommand(name: s.name, label: s.name, description: s.description, hint: '', kind: SlashCommandKind.skill),
-  ];
+  return skillSlashCommands(skills);
 });
 
 /// Everything the palette offers for [sessionId].
