@@ -1,6 +1,7 @@
 // 插件设置一页到底：每个已安装插件一行。能在这里改的直接进原生表单，
 // 只能在自己的网页界面里改的，点开详情，那里给「在网页版打开」（ticket #10）。
 
+import 'package:dsh_client/dsh_client.dart' show PluginBundle;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
