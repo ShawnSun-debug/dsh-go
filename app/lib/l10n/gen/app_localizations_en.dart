@@ -11476,6 +11476,9 @@ class L10nEn extends L10n {
   String get pluginsInstallSpecUnknown => 'The check failed; try another form';
 
   @override
+  String get pluginsInstallSpecFallback => 'Not here? Install by package name or Git URL';
+
+  @override
   String get pluginsMarketTitle => 'Plugin market';
 
   @override
