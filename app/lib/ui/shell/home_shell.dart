@@ -17,6 +17,7 @@ import '../../state/drawer_view_state.dart' show drawerSelectionProvider;
 import '../../state/sessions_state.dart' show currentSessionProvider;
 import '../bots/bot_alerts.dart';
 import '../chat/chat_screen.dart';
+import 'drawer_chrome.dart';
 import '../chat/composer_toast.dart' show composerToastGap;
 import '../engine/engine_screen.dart';
 import '../features/all_features_page.dart';
@@ -284,14 +285,20 @@ class _HomeShellState extends ConsumerState<HomeShell> with SingleTickerProvider
                           layout: layout,
                           // Stored choices arriving at launch snap into place.
                           animate: prefs.loaded,
-                          body: RawGestureDetector(
-                            // translucent: join the hit chain without swallowing taps
-                            // meant for the chat; wraps the whole chat column so empty
-                            // areas still drag. Not 对话详情 beside it: its tabs swipe.
-                            // No drawer to pull while the sidebar shows.
-                            behavior: HitTestBehavior.translucent,
-                            gestures: layout.left == LeftPane.sidebar ? const {} : _drawerGestures,
-                            child: chat,
+                          body: DrawerChromeScope(
+                            progress: _drawer,
+                            // The scrim dims whatever is under it, but a glass
+                            // header looks transparent under a flat black layer:
+                            // the header steps aside with the drawer instead.
+                            child: RawGestureDetector(
+                              // translucent: join the hit chain without swallowing taps
+                              // meant for the chat; wraps the whole chat column so empty
+                              // areas still drag. Not 对话详情 beside it: its tabs swipe.
+                              // No drawer to pull while the sidebar shows.
+                              behavior: HitTestBehavior.translucent,
+                              gestures: layout.left == LeftPane.sidebar ? const {} : _drawerGestures,
+                              child: chat,
+                            ),
                           ),
                           sidebar: SessionsDrawer(
                             key: const ValueKey('persistent-sidebar'),
