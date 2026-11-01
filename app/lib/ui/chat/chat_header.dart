@@ -16,6 +16,7 @@ import '../common/smooth_size.dart';
 import '../common/status_dot.dart';
 import '../shell/adaptive/adaptive_scaffold.dart' show AdaptiveChrome;
 import '../shell/adaptive/detail_panel_keys.dart';
+import '../shell/drawer_chrome.dart';
 import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import 'header_schedule.dart';
@@ -149,7 +150,9 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
         ),
         Padding(
           padding: EdgeInsets.fromLTRB(12, top, 12, 0),
-          child: BackdropGroup(
+          // Steps aside while the drawer comes over it (see DrawerChrome).
+          child: DrawerChrome(
+            child: BackdropGroup(
             child: SizedBox(
               key: const ValueKey('chat-header-bar'),
               height: barHeight,
@@ -277,6 +280,7 @@ class _ChatHeaderState extends ConsumerState<ChatHeader> {
             ),
           ),
         ),
+      ),
       ],
     );
   }
