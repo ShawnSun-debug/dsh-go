@@ -266,6 +266,10 @@ final Set<HostRef> _warmedHosts = {};
 /// than from a live agent.
 final Set<HostRef> _staleHosts = {};
 
+/// Hosts whose last new-chat borrow was refused (no handler, transport
+/// error): the palette offers a retry instead of looking merely empty.
+final Set<HostRef> _refusedHosts = {};
+
 /// Skills as palette rows: `/name …` goes out as a normal message and the
 /// Host loads the skill from its text.
 List<SlashCommand> skillSlashCommands(List<SkillInfo> skills) => [
@@ -278,6 +282,13 @@ List<SlashCommand> skillSlashCommands(List<SkillInfo> skills) => [
 final newChatCatalogStaleProvider = Provider.autoDispose<bool>((ref) {
   ref.watch(hostCommandsProvider(null));
   return _staleHosts.contains(ref.watch(activeHostProvider));
+});
+
+/// Whether the last new-chat borrow was refused: the palette then offers a
+/// retry, whose invalidation asks the Host again.
+final newChatCatalogRetryableProvider = Provider.autoDispose<bool>((ref) {
+  ref.watch(hostCommandsProvider(null));
+  return _refusedHosts.contains(ref.watch(activeHostProvider));
 });
 
 /// `commands/list` for [sessionId] (null = new chat: the last known list).
@@ -298,14 +309,16 @@ final hostCommandsProvider = FutureProvider.autoDispose.family<List<SlashCommand
     if (!_warmedHosts.add(host)) return const [];
     try {
       final newest = (await conn.client.listSessions()).where((s) => s.origin == null).firstOrNull;
+      _refusedHosts.remove(host);
       if (newest == null) return const [];
-      _staleHosts.add(host);
       _lastHostSkills[host] = skillSlashCommands(await conn.client.listSkills(newest.sessionId));
-      return _lastHostCommands[host] = parseCommandList(
-        await conn.client.rpc.call('commands/list', {'agentId': newest.sessionId}),
-      );
+      final commands = parseCommandList(await conn.client.rpc.call('commands/list', {'agentId': newest.sessionId}));
+      // Only a borrow that landed says "from your last conversation".
+      _staleHosts.add(host);
+      return _lastHostCommands[host] = commands;
     } catch (_) {
-      // A host that refused the lookup gets asked again next cold start.
+      // A refused borrow keeps the retry affordance and is asked again.
+      _refusedHosts.add(host);
       _warmedHosts.remove(host);
       return const [];
     }

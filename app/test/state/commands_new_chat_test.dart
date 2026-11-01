@@ -143,11 +143,14 @@ void main() {
     client.rows = [_row('newest')];
     client.handlers.remove('skills/list');
     expect(await readNewChatCatalog(), isEmpty, reason: 'the Host refused the catalog');
+    expect(container.read(newChatCatalogRetryableProvider), isTrue, reason: 'the palette offers a retry');
 
     client.handlers['commands/list'] = (_) => [_goalDescriptor];
     client.serveSkills();
     container.invalidate(hostCommandsProvider(null));
     expect((await readNewChatCatalog()).single.name, 'goal', reason: 'a refused host is asked again');
+    expect(container.read(newChatCatalogRetryableProvider), isFalse, reason: 'a successful borrow is not retryable');
+    expect(container.read(newChatCatalogStaleProvider), isTrue, reason: 'and it says where the rows came from');
 
     client.handlers.remove('commands/list');
     container.invalidate(hostCommandsProvider(null));

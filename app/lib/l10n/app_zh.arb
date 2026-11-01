@@ -420,6 +420,8 @@
   "activitySecretHide": "隐藏密钥",
   "activitySecretShow": "显示密钥",
   "activitySlashNoMatch": "没有匹配的指令，按普通消息发送",
+  "activitySlashBorrowed": "来自上次对话，可能不含新装的技能",
+  "activitySlashRetry": "重试",
   "activitySlashCommands": "指令",
   "activitySlashEnterArgs": "输入参数后发送",
   "activityStepTitle": "步骤详情",

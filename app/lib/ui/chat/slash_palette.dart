@@ -63,10 +63,23 @@ final class PaletteHint extends PaletteContent {
 /// 行首图标的中心与输入条里 ＋ 键的中心对齐;图标是 20 号线性图标、次要色,
 /// 不带底色。
 class SlashPalette extends StatelessWidget {
-  const SlashPalette({super.key, required this.content, required this.onPick});
+  const SlashPalette({
+    super.key,
+    required this.content,
+    required this.onPick,
+    this.borrowed = false,
+    this.onRetry,
+  });
 
   final PaletteContent content;
   final ValueChanged<SlashCommand> onPick;
+
+  /// The rows come from the previous conversation: say so, because a skill
+  /// installed since is not in them.
+  final bool borrowed;
+
+  /// The last attempt to read the catalog failed: offer one more try.
+  final VoidCallback? onRetry;
 
   static const _rowHeight = 56.0;
   static const _maxRows = 5.5;
@@ -98,15 +111,21 @@ class SlashPalette extends StatelessWidget {
           ],
         ),
       ),
-      PaletteMatches(:final commands, :final typed) => ConstrainedBox(
-        constraints: const BoxConstraints(maxHeight: _rowHeight * _maxRows),
-        child: ListView.builder(
-          shrinkWrap: true,
-          padding: const EdgeInsets.symmetric(vertical: rowInset),
-          itemCount: commands.length,
-          itemBuilder: (context, i) =>
-              _CommandTile(command: commands[i], highlighted: typed && i == 0, onTap: () => onPick(commands[i])),
-        ),
+      PaletteMatches(:final commands, :final typed) => Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: _rowHeight * _maxRows),
+            child: ListView.builder(
+              shrinkWrap: true,
+              padding: const EdgeInsets.symmetric(vertical: rowInset),
+              itemCount: commands.length,
+              itemBuilder: (context, i) =>
+                  _CommandTile(command: commands[i], highlighted: typed && i == 0, onTap: () => onPick(commands[i])),
+            ),
+          ),
+          if (borrowed || onRetry != null) _PaletteNotice(borrowed: borrowed, onRetry: onRetry),
+        ],
       ),
       PaletteHint(:final command) => Padding(
         padding: const EdgeInsets.symmetric(vertical: rowInset),
@@ -134,6 +153,52 @@ class SlashPalette extends StatelessWidget {
             child: body,
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// The one line under the rows: where they came from, or a retry when the
+/// Host refused to say. It never takes more than one row of the palette.
+class _PaletteNotice extends StatelessWidget {
+  const _PaletteNotice({required this.borrowed, this.onRetry});
+
+  final bool borrowed;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final dsh = DshColors.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(SlashPalette.rowInset + 8, 0, SlashPalette.rowInset + 4, 4),
+      child: Row(
+        children: [
+          if (borrowed)
+            Expanded(
+              child: Text(
+                l10n.activitySlashBorrowed,
+                maxLines: 2,
+                style: theme.textTheme.bodySmall?.copyWith(color: dsh.textTertiary, height: 1.3),
+              ),
+            )
+          else
+            const Spacer(),
+          if (onRetry != null)
+            TextButton(
+              onPressed: onRetry,
+              style: TextButton.styleFrom(
+                minimumSize: const Size(0, 32),
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                visualDensity: VisualDensity.compact,
+                textStyle: theme.textTheme.bodySmall,
+              ),
+              child: Text(l10n.activitySlashRetry),
+            ),
+        ],
       ),
     );
   }

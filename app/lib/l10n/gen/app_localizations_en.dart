@@ -1096,6 +1096,12 @@ class L10nEn extends L10n {
   String get activitySlashNoMatch => 'No matching command. Send as a message';
 
   @override
+  String get activitySlashBorrowed => 'From your last conversation; skills installed since may be missing';
+
+  @override
+  String get activitySlashRetry => 'Retry';
+
+  @override
   String get activitySlashCommands => 'Commands';
 
   @override

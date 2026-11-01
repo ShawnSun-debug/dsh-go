@@ -1090,6 +1090,12 @@ class L10nZh extends L10n {
   String get activitySlashNoMatch => '没有匹配的指令，按普通消息发送';
 
   @override
+  String get activitySlashBorrowed => '来自上次对话，可能不含新装的技能';
+
+  @override
+  String get activitySlashRetry => '重试';
+
+  @override
   String get activitySlashCommands => '指令';
 
   @override

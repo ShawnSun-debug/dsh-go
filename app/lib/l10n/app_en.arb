@@ -354,6 +354,8 @@
   "activitySecretHide": "Hide key",
   "activitySecretShow": "Show key",
   "activitySlashNoMatch": "No matching command. Send as a message",
+  "activitySlashBorrowed": "From your last conversation; skills installed since may be missing",
+  "activitySlashRetry": "Retry",
   "activitySlashCommands": "Commands",
   "activitySlashEnterArgs": "Enter arguments, then send",
   "activityStepTitle": "Step details",
