@@ -31,6 +31,7 @@ import '../theme/app_icons.dart';
 import '../theme/theme.dart';
 import 'config/plugin_config_entries.dart';
 import 'plugin_detail_sheet.dart' show PluginHero;
+import 'plugin_settings_hub_page.dart';
 import 'plugin_widgets.dart';
 import 'voice_scribe_settings_page.dart';
 
@@ -138,6 +139,24 @@ class _PluginInventoryPageState extends ConsumerState<PluginInventoryPage> {
       title: l10n.pluginsInventoryTitle,
       subtitle: snapshot == null ? null : Text(_summary(snapshot)),
       slivers: [
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: ListPageCard(
+              margin: EdgeInsets.zero,
+              children: [
+                ListPageRow(
+                  title: l10n.commonSettings,
+                  subtitle: l10n.hubPlugins,
+                  chevron: true,
+                  onTap: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(builder: (_) => const PluginSettingsHubPage()),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
         if (snapshot != null) ...[
           SliverToBoxAdapter(
             child: Padding(
