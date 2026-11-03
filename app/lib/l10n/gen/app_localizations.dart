@@ -62,7 +62,8 @@ import 'app_localizations_zh.dart';
 /// be consistent with the languages listed in the L10n.supportedLocales
 /// property.
 abstract class L10n {
-  L10n(String locale) : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+  L10n(String locale)
+    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -82,15 +83,19 @@ abstract class L10n {
   /// Additional delegates can be added by appending to this list in
   /// MaterialApp. This list does not have to be used at all if a custom list
   /// of delegates is preferred or required.
-  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates = <LocalizationsDelegate<dynamic>>[
-    delegate,
-    GlobalMaterialLocalizations.delegate,
-    GlobalCupertinoLocalizations.delegate,
-    GlobalWidgetsLocalizations.delegate,
-  ];
+  static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
+      <LocalizationsDelegate<dynamic>>[
+        delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+      ];
 
   /// A list of this localizations delegate's supported locales.
-  static const List<Locale> supportedLocales = <Locale>[Locale('en'), Locale('zh')];
+  static const List<Locale> supportedLocales = <Locale>[
+    Locale('en'),
+    Locale('zh'),
+  ];
 
   /// No description provided for @accessPickTitle.
   ///
@@ -2610,7 +2615,11 @@ abstract class L10n {
   ///
   /// In zh, this message translates to:
   /// **'{title} {detail}，用时 {duration}'**
-  String activityTraceSpanSemantics(String title, String detail, String duration);
+  String activityTraceSpanSemantics(
+    String title,
+    String detail,
+    String duration,
+  );
 
   /// No description provided for @activityTraceGroupSemantics.
   ///
@@ -7110,7 +7119,13 @@ abstract class L10n {
   ///
   /// In zh, this message translates to:
   /// **'{title}\n{objective}\n{status} · 第 {rounds}/{max} 轮'**
-  String chatCommandGoalSummary(String title, String objective, String status, int rounds, int max);
+  String chatCommandGoalSummary(
+    String title,
+    String objective,
+    String status,
+    int rounds,
+    int max,
+  );
 
   /// No description provided for @chatCommandFailed.
   ///
@@ -11100,13 +11115,21 @@ abstract class L10n {
   ///
   /// In zh, this message translates to:
   /// **'每月 {days} 日且{weekdays}{months}'**
-  String featuresCronMonthDaysAndWeekdays(String days, String weekdays, String months);
+  String featuresCronMonthDaysAndWeekdays(
+    String days,
+    String weekdays,
+    String months,
+  );
 
   /// No description provided for @featuresCronMonthDaysOrWeekdays.
   ///
   /// In zh, this message translates to:
   /// **'每月 {days} 日或{weekdays}{months}'**
-  String featuresCronMonthDaysOrWeekdays(String days, String weekdays, String months);
+  String featuresCronMonthDaysOrWeekdays(
+    String days,
+    String weekdays,
+    String months,
+  );
 
   /// No description provided for @featuresCronHourRange.
   ///
@@ -12318,7 +12341,12 @@ abstract class L10n {
   ///
   /// In zh, this message translates to:
   /// **'更新 Agent 预设「{name}」（{id}）：在工作区写下这两个文件（内容原样），用 plugin_manager 先移除组合包 `{replacing}`，再用 install_bundle 安装 `{directory}` 目录。只做这些。\n\n'**
-  String featuresPresetUpdateRequest(String name, String id, String replacing, String directory);
+  String featuresPresetUpdateRequest(
+    String name,
+    String id,
+    String replacing,
+    String directory,
+  );
 
   /// No description provided for @featuresZoneThisPhone.
   ///
@@ -18570,7 +18598,10 @@ abstract class L10n {
   ///
   /// In zh, this message translates to:
   /// **'需要 DSH {requiredVersion}，当前 {currentVersion}，未加载'**
-  String pluginsRequiresDshVersion(String requiredVersion, String currentVersion);
+  String pluginsRequiresDshVersion(
+    String requiredVersion,
+    String currentVersion,
+  );
 
   /// No description provided for @pluginsLoadFailure.
   ///
@@ -20502,7 +20533,12 @@ abstract class L10n {
   ///
   /// In zh, this message translates to:
   /// **'{mode}：{before} 已校正为 {after}，对比度至少 {minimum}:1'**
-  String plugViewContrastAdjusted(String mode, String before, String after, String minimum);
+  String plugViewContrastAdjusted(
+    String mode,
+    String before,
+    String after,
+    String minimum,
+  );
 
   /// No description provided for @plugViewRichLimit.
   ///
@@ -22830,7 +22866,11 @@ abstract class L10n {
   ///
   /// In zh, this message translates to:
   /// **'确认主机重装或更换后，可在主机设置中重置指纹。\n已记住：{saved}\n这次收到：{received}（{type}）'**
-  String remoteHostKeyMismatchDetail(String saved, String received, String type);
+  String remoteHostKeyMismatchDetail(
+    String saved,
+    String received,
+    String type,
+  );
 
   /// No description provided for @remoteForumCompactReplies.
   ///
@@ -27516,7 +27556,11 @@ abstract class L10n {
   ///
   /// In zh, this message translates to:
   /// **'换用{registry}下载（第 {attempt}/{attempts} 个源）'**
-  String statePluginRegistryProgress(String registry, int attempt, int attempts);
+  String statePluginRegistryProgress(
+    String registry,
+    int attempt,
+    int attempts,
+  );
 
   /// No description provided for @stateProviderServiceUnavailable.
   ///
@@ -27625,6 +27669,222 @@ abstract class L10n {
   /// In zh, this message translates to:
   /// **'随时随刻，想go就Go！'**
   String get appSlogan;
+
+  /// No description provided for @superagentTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'Superagent'**
+  String get superagentTitle;
+
+  /// No description provided for @superagentFieldStateDir.
+  ///
+  /// In zh, this message translates to:
+  /// **'状态目录'**
+  String get superagentFieldStateDir;
+
+  /// No description provided for @superagentFieldStateDirHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'改了要重启才生效'**
+  String get superagentFieldStateDirHint;
+
+  /// No description provided for @superagentFieldApprovalMode.
+  ///
+  /// In zh, this message translates to:
+  /// **'审批模式'**
+  String get superagentFieldApprovalMode;
+
+  /// No description provided for @superagentFieldApprovalModeHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'动作默认的信任级别'**
+  String get superagentFieldApprovalModeHint;
+
+  /// No description provided for @superagentApprovalL1.
+  ///
+  /// In zh, this message translates to:
+  /// **'L1 直接执行'**
+  String get superagentApprovalL1;
+
+  /// No description provided for @superagentApprovalL1Hint.
+  ///
+  /// In zh, this message translates to:
+  /// **'最宽：不询问'**
+  String get superagentApprovalL1Hint;
+
+  /// No description provided for @superagentApprovalL2.
+  ///
+  /// In zh, this message translates to:
+  /// **'L2 执行并通知'**
+  String get superagentApprovalL2;
+
+  /// No description provided for @superagentApprovalL2Hint.
+  ///
+  /// In zh, this message translates to:
+  /// **'边做边告诉你'**
+  String get superagentApprovalL2Hint;
+
+  /// No description provided for @superagentApprovalL3.
+  ///
+  /// In zh, this message translates to:
+  /// **'L3 先问我'**
+  String get superagentApprovalL3;
+
+  /// No description provided for @superagentApprovalL3Hint.
+  ///
+  /// In zh, this message translates to:
+  /// **'最严：动手前确认'**
+  String get superagentApprovalL3Hint;
+
+  /// No description provided for @superagentFieldBudgetPerEval.
+  ///
+  /// In zh, this message translates to:
+  /// **'单次评估 token 上限'**
+  String get superagentFieldBudgetPerEval;
+
+  /// No description provided for @superagentFieldBudgetPerEvalHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'0 表示不限'**
+  String get superagentFieldBudgetPerEvalHint;
+
+  /// No description provided for @superagentFieldBudgetPerHour.
+  ///
+  /// In zh, this message translates to:
+  /// **'每小时 token 上限'**
+  String get superagentFieldBudgetPerHour;
+
+  /// No description provided for @superagentFieldBudgetPerHourHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'滚动一小时'**
+  String get superagentFieldBudgetPerHourHint;
+
+  /// No description provided for @superagentFieldBudgetOnExceed.
+  ///
+  /// In zh, this message translates to:
+  /// **'超额后的行为'**
+  String get superagentFieldBudgetOnExceed;
+
+  /// No description provided for @superagentBudgetPause.
+  ///
+  /// In zh, this message translates to:
+  /// **'暂停'**
+  String get superagentBudgetPause;
+
+  /// No description provided for @superagentBudgetObserve.
+  ///
+  /// In zh, this message translates to:
+  /// **'只告警'**
+  String get superagentBudgetObserve;
+
+  /// No description provided for @superagentFieldActionRoots.
+  ///
+  /// In zh, this message translates to:
+  /// **'动作根目录'**
+  String get superagentFieldActionRoots;
+
+  /// No description provided for @superagentFieldActionRootsHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'为空则拒绝一切移动'**
+  String get superagentFieldActionRootsHint;
+
+  /// No description provided for @superagentActionRootItem.
+  ///
+  /// In zh, this message translates to:
+  /// **'目录'**
+  String get superagentActionRootItem;
+
+  /// No description provided for @superagentFieldRecordingMode.
+  ///
+  /// In zh, this message translates to:
+  /// **'录制模式'**
+  String get superagentFieldRecordingMode;
+
+  /// No description provided for @superagentRecordingOff.
+  ///
+  /// In zh, this message translates to:
+  /// **'不录'**
+  String get superagentRecordingOff;
+
+  /// No description provided for @superagentRecordingSummary.
+  ///
+  /// In zh, this message translates to:
+  /// **'摘要'**
+  String get superagentRecordingSummary;
+
+  /// No description provided for @superagentRecordingFull.
+  ///
+  /// In zh, this message translates to:
+  /// **'全量'**
+  String get superagentRecordingFull;
+
+  /// No description provided for @superagentFieldRetentionDays.
+  ///
+  /// In zh, this message translates to:
+  /// **'录制保留天数'**
+  String get superagentFieldRetentionDays;
+
+  /// No description provided for @superagentFieldMaxBytes.
+  ///
+  /// In zh, this message translates to:
+  /// **'录制总大小上限'**
+  String get superagentFieldMaxBytes;
+
+  /// No description provided for @superagentFieldRemoteChannel.
+  ///
+  /// In zh, this message translates to:
+  /// **'远程通道'**
+  String get superagentFieldRemoteChannel;
+
+  /// No description provided for @superagentFieldRemoteChannelHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'允许在对话里审批'**
+  String get superagentFieldRemoteChannelHint;
+
+  /// No description provided for @superagentFieldNotifications.
+  ///
+  /// In zh, this message translates to:
+  /// **'通知'**
+  String get superagentFieldNotifications;
+
+  /// No description provided for @superagentFieldNotificationsHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'关掉就收不到审批提醒'**
+  String get superagentFieldNotificationsHint;
+
+  /// No description provided for @superagentFieldPromptMaxChars.
+  ///
+  /// In zh, this message translates to:
+  /// **'提示词上限'**
+  String get superagentFieldPromptMaxChars;
+
+  /// No description provided for @superagentFieldContextPages.
+  ///
+  /// In zh, this message translates to:
+  /// **'评估读几页上下文'**
+  String get superagentFieldContextPages;
+
+  /// No description provided for @superagentFieldContextTimeout.
+  ///
+  /// In zh, this message translates to:
+  /// **'上下文读取超时'**
+  String get superagentFieldContextTimeout;
+
+  /// No description provided for @superagentUnitDays.
+  ///
+  /// In zh, this message translates to:
+  /// **'天'**
+  String get superagentUnitDays;
+
+  /// No description provided for @superagentUnitChars.
+  ///
+  /// In zh, this message translates to:
+  /// **'字符'**
+  String get superagentUnitChars;
 
   /// No description provided for @updateCheck.
   ///
@@ -31050,7 +31310,8 @@ class _L10nDelegate extends LocalizationsDelegate<L10n> {
   }
 
   @override
-  bool isSupported(Locale locale) => <String>['en', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) =>
+      <String>['en', 'zh'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_L10nDelegate old) => false;

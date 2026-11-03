@@ -30,6 +30,7 @@ Map<String, String> get namespaceTitles => <String, String>{
   'ui-conversation': appL10n.engineGeneralTitle,
   'ui-settings': appL10n.engineGeneralTitle,
   'locale': appL10n.engineLanguageTitle,
+  'dsh-superagent': appL10n.superagentTitle,
 };
 
 Map<String, FieldCopy> get _shell => <String, FieldCopy>{
@@ -175,6 +176,52 @@ Map<String, Map<String, FieldCopy>> get namespaceCopy => <String, Map<String, Fi
   },
   'locale': {
     'preference': FieldCopy(label: appL10n.engineFieldInterfaceLanguage, placeholder: appL10n.commonFollowSystem),
+  },
+  'dsh-superagent': {
+    'stateDir': FieldCopy(label: appL10n.superagentFieldStateDir, hint: appL10n.superagentFieldStateDirHint),
+    'approvalMode': FieldCopy(
+      label: appL10n.superagentFieldApprovalMode,
+      hint: appL10n.superagentFieldApprovalModeHint,
+      choices: {
+        'L1': '${appL10n.superagentApprovalL1} · ${appL10n.superagentApprovalL1Hint}',
+        'L2': '${appL10n.superagentApprovalL2} · ${appL10n.superagentApprovalL2Hint}',
+        'L3': '${appL10n.superagentApprovalL3} · ${appL10n.superagentApprovalL3Hint}',
+      },
+    ),
+    'budgetTokensPerEval': FieldCopy(
+      label: appL10n.superagentFieldBudgetPerEval,
+      hint: appL10n.superagentFieldBudgetPerEvalHint,
+      unit: FieldUnit.tokens,
+    ),
+    'budgetTokensPerHour': FieldCopy(
+      label: appL10n.superagentFieldBudgetPerHour,
+      hint: appL10n.superagentFieldBudgetPerHourHint,
+      unit: FieldUnit.tokens,
+    ),
+    'budgetOnExceed': FieldCopy(
+      label: appL10n.superagentFieldBudgetOnExceed,
+      choices: {'pause': appL10n.superagentBudgetPause, 'observe': appL10n.superagentBudgetObserve},
+    ),
+    'actionRoots': FieldCopy(
+      label: appL10n.superagentFieldActionRoots,
+      hint: appL10n.superagentFieldActionRootsHint,
+      itemLabel: appL10n.superagentActionRootItem,
+    ),
+    'recordingMode': FieldCopy(
+      label: appL10n.superagentFieldRecordingMode,
+      choices: {
+        'off': appL10n.superagentRecordingOff,
+        'summary': appL10n.superagentRecordingSummary,
+        'full': appL10n.superagentRecordingFull,
+      },
+    ),
+    'recordingRetentionDays': FieldCopy(label: appL10n.superagentFieldRetentionDays, suffix: appL10n.superagentUnitDays),
+    'recordingMaxBytes': FieldCopy(label: appL10n.superagentFieldMaxBytes, unit: FieldUnit.bytes),
+    'remoteChannel': FieldCopy(label: appL10n.superagentFieldRemoteChannel, hint: appL10n.superagentFieldRemoteChannelHint),
+    'notifications': FieldCopy(label: appL10n.superagentFieldNotifications, hint: appL10n.superagentFieldNotificationsHint),
+    'promptMaxChars': FieldCopy(label: appL10n.superagentFieldPromptMaxChars, suffix: appL10n.superagentUnitChars),
+    'admissionContextMaxPages': FieldCopy(label: appL10n.superagentFieldContextPages),
+    'admissionContextTimeoutMs': FieldCopy(label: appL10n.superagentFieldContextTimeout, unit: FieldUnit.milliseconds),
   },
 };
 
