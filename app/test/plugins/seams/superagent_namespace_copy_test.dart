@@ -124,6 +124,14 @@ void main() {
     expect(find.textContaining('L3 先问我', skipOffstage: false), findsWidgets);
     expect(find.text('Directory for the database and locks.', skipOffstage: false), findsNothing);
     expect(find.text('改了要重启才生效', skipOffstage: false), findsOneWidget);
+    // Units: the retention count carries the day suffix and the prompt limit the
+    // character suffix (suffix applies to plain fields only); the byte and
+    // millisecond fields format their own value instead.
+    // 「录制保留天数」这个标签自己就含「天」，所以数次数：标签 + 值后缀各一次。
+    expect(find.textContaining('天', skipOffstage: false), findsNWidgets(2), reason: 'label plus the value suffix');
+    expect(find.textContaining('字符', skipOffstage: false), findsWidgets, reason: 'prompt characters suffix');
+    expect(find.textContaining('MB', skipOffstage: false), findsWidgets, reason: 'recordings size unit');
+    expect(find.textContaining('秒', skipOffstage: false), findsWidgets, reason: 'context timeout unit');
   });
 
   testWidgets('English locale shows the English copy and no Chinese', (tester) async {
@@ -133,5 +141,7 @@ void main() {
     for (final label in ['State directory', 'Approval mode', 'Action roots', 'Notifications']) {
       expect(find.text(label, skipOffstage: false), findsWidgets, reason: 'missing field label: $label');
     }
+    expect(find.textContaining('days', skipOffstage: false), findsWidgets, reason: 'retention days suffix');
+    expect(find.textContaining('characters', skipOffstage: false), findsWidgets, reason: 'prompt characters suffix');
   });
 }
