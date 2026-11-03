@@ -15,6 +15,11 @@ val keyProps = Properties().apply {
 // Per-ABI runtime bundles produced by runtime/build-runtime.sh.
 val runtimeOut = rootProject.file("../../runtime/out")
 
+// A side-by-side build: the official release is signed with a key this fork
+// does not hold, so a test build can only be installed beside it under another
+// applicationId. Empty for every normal build.
+val appIdSuffix = (project.findProperty("appIdSuffix") as String?) ?: ""
+
 // versionCode is the build minute, same encoding as tooling/build_number.py:
 // (year - 2026) * 10^8 + MMDDhhmm at UTC+8. tooling/build-apk.sh passes it as
 // --build-number; this covers builds that skip the script (flutter run, the
@@ -36,7 +41,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "io.github.ccch1mneyyy.dsh_app"
+        applicationId = "io.github.ccch1mneyyy.dsh_app$appIdSuffix"
         // java.nio.file (symlinks while unpacking the rootfs) needs API 26.
         minSdk = 26
         // Target 28 like Termux, so the API 29+ exec restriction on app-private

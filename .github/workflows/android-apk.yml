@@ -2,6 +2,11 @@ name: android-apk
 
 on:
   workflow_dispatch:
+    inputs:
+      app_id_suffix:
+        description: 'applicationId suffix for a side-by-side test build (e.g. .t36)'
+        required: false
+        default: ''
   push:
     branches: [main]
     paths:
@@ -51,6 +56,10 @@ jobs:
       - name: build
         run: |
           printf 'org.gradle.jvmargs=-Xmx4g -XX:MaxMetaspaceSize=1g -XX:+HeapDumpOnOutOfMemoryError\norg.gradle.logging.stacktrace=all\n' >> android/gradle.properties
+          if [ -n "${{ inputs.app_id_suffix }}" ]; then
+            echo "appIdSuffix=${{ inputs.app_id_suffix }}" >> android/gradle.properties
+            echo "side-by-side applicationId suffix: ${{ inputs.app_id_suffix }}"
+          fi
           set +e
           flutter build apk --release --target-platform android-arm64 2>&1 | tail -60
           echo "flutter exit: $?"
